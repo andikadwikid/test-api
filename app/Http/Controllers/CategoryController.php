@@ -6,6 +6,7 @@ use App\Http\Requests\Category\CategoryStore;
 use App\Http\Requests\Category\CategoryUpdate;
 use App\Models\Categories;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CategoryController extends Controller
 {
@@ -19,11 +20,22 @@ class CategoryController extends Controller
         ], 200);
     }
 
-    public function store(CategoryStore $request)
+    public function store(Request $request)
     {
+        $validate = Validator::make($request->all(), [
+            'name' => 'required|unique:categories,name',
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json($validate->errors(), 400);
+        }
+
         $data = $request->only(['name']);
         $catregories = Categories::create($data);
 
+        if ($validate->fails()) {
+            return response()->json($validate->errors(), 400);
+        };
         return response()->json([
             'success' => true,
             'message' => 'Success input data',
@@ -49,11 +61,18 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(CategoryUpdate $request, $id)
+    public function update(Request $request, $id)
     {
         $check = Categories::firstWhere('id', $id);
 
         if ($check) {
+            $validate = Validator::make($request->all(), [
+                'name' => 'required|unique:categories,name',
+            ]);
+
+            if ($validate->fails()) {
+                return response()->json($validate->errors(), 400);
+            }
             $category = Categories::findOrFail($id);
             $category->name = $request->name;
             $category->save();

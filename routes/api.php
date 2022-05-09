@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,9 +26,19 @@ Route::prefix('v1')->group(function () {
     Route::post('/login', [LoginController::class, 'login']);
 });
 Route::middleware('auth:api')->group(function () {
-    Route::get('/category', [CategoryController::class, 'index']);
-    Route::post('/category', [CategoryController::class, 'store']);
-    Route::get('/category/{id}', [CategoryController::class, 'show']);
-    Route::put('/category/{id}', [CategoryController::class, 'update']);
-    Route::delete('/category/{id}', [CategoryController::class, 'delete']);
+    Route::controller(CategoryController::class)->group(function () {
+        Route::get('/category', 'index');
+        Route::post('/category', 'store');
+        Route::get('/category/{id}', 'show');
+        Route::put('/category/{id}', 'update');
+        Route::delete('/category/{id}', 'delete');
+    });
+
+    Route::controller(PostController::class)->group(function () {
+        Route::get('/posts', 'index');
+        Route::post('/posts', 'store');
+        Route::get('/posts/{id}', 'show');
+        Route::post('/posts/{id}', 'update');
+        Route::delete('/posts/{id}', 'delete');
+    });
 });
