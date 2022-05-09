@@ -19,7 +19,8 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
-
+        // dd($user);
+        $accessToken = $user->createToken('authToken')->accessToken;
 
         if (!$user) {
             return response()->json([
@@ -31,7 +32,7 @@ class RegisterController extends Controller
                 'success' => true,
                 'message' => 'Register success',
                 'user' => $user,
-                'access_token' => $user->createToken('authToken')->accessToken,
+                'access_token' => $accessToken,
             ], 200);
         }
     }

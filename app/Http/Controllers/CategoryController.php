@@ -23,7 +23,7 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validate = Validator::make($request->all(), [
-            'name' => 'required|unique:categories,name',
+            'name' => 'required',
         ]);
 
         if ($validate->fails()) {

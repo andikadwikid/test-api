@@ -22,23 +22,25 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 Route::prefix('v1')->group(function () {
-    Route::post('/register', [RegisterController::class, 'register']);
-    Route::post('/login', [LoginController::class, 'login']);
-});
-Route::middleware('auth:api')->group(function () {
-    Route::controller(CategoryController::class)->group(function () {
-        Route::get('/category', 'index');
-        Route::post('/category', 'store');
-        Route::get('/category/{id}', 'show');
-        Route::put('/category/{id}', 'update');
-        Route::delete('/category/{id}', 'delete');
-    });
+    Route::post('/register', [RegisterController::class, 'register'])->name('register');
+    Route::post('/login', [LoginController::class, 'login'])->name('login');
 
-    Route::controller(PostController::class)->group(function () {
-        Route::get('/posts', 'index');
-        Route::post('/posts', 'store');
-        Route::get('/posts/{id}', 'show');
-        Route::post('/posts/{id}', 'update');
-        Route::delete('/posts/{id}', 'delete');
+    Route::middleware('auth:api')->group(function () {
+
+        Route::controller(CategoryController::class)->group(function () {
+            Route::get('/category', 'index')->name('category.index');
+            Route::post('/category', 'store')->name('category.store');
+            Route::get('/category/{id}', 'show')->name('category.show');
+            Route::put('/category/{id}', 'update')->name('category.update');
+            Route::delete('/category/{id}', 'delete')->name('category.delete');
+        });
+
+        Route::controller(PostController::class)->group(function () {
+            Route::get('/posts', 'index')->name('post.index');
+            Route::post('/posts', 'store')->name('post.store');
+            Route::get('/posts/{id}', 'show')->name('post.show');
+            Route::put('/posts/{id}', 'update')->name('post.update');
+            Route::delete('/posts/{id}', 'delete')->name('post.delete');
+        });
     });
 });

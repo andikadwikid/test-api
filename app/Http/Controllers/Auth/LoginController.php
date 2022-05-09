@@ -37,6 +37,6 @@ class LoginController extends Controller
             'message' => 'Login Success!',
             'data'    => $user,
             'token'   => $user->createToken('authToken')->accessToken
-        ]);
+        ], 200);
     }
 }

@@ -23,7 +23,7 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         $check_category = Categories::where('id', $request->category_id)->first();
 
         if (!$check_category) {
@@ -31,21 +31,21 @@ class PostController extends Controller
                 'message' => 'category is not exist',
             ]);
         }
-        $validate = Validator::make($request->all(), [
-            'title' => 'required',
-            'content' => 'required',
-            'image' => 'required|mimes:png,jpg,jpeg|max:2048',
-            'status' => 'required',
-        ]);
+        // $validate = Validator::make($request->all(), [
+        //     'title' => 'required',
+        //     'content' => 'required',
+        //     'image' => 'required|mimes:png,jpg,jpeg|max:2048',
+        //     'status' => 'required',
+        // ]);
 
-        if ($validate->fails()) {
-            return response()->json($validate->errors(), 400);
-        }
+        // if ($validate->fails()) {
+        //     return response()->json($validate->errors(), 400);
+        // }
 
         $data = $request->all();
         $image = $request->file('image');
-        $image->storeAs('public/image', $image->hashName());
         $data['image'] = $image->hashName();
+        $image->storeAs('public/image', $image->hashName());
 
         $post = Post::create($data);
 
@@ -83,19 +83,33 @@ class PostController extends Controller
     {
 
         $post = Post::findOrFail($id);
+        dd($request->all());
         $data = $request->all();
         // dd($post->image);
         if (!$request->file('image')) {
             $post->update($data);
+            return response()->json([
+                'success' => true,
+                'message' => 'Success Update Data',
+                'update' => $post
+            ], 200);
         } else {
             Storage::delete('public/image/' . $post->image);
             $image = $request->file('image');
             $image->storeAs('public/image', $image->hashName());
             $data['image'] = $image->hashName();
             $post->update($data);
+            return response()->json([
+                'success' => true,
+                'message' => 'Success Update Data',
+                'update' => $post
+            ], 200);
         }
 
-        return $post;
+        return response()->json([
+            'success' => false,
+            'message' => 'Error',
+        ], 404);
     }
 
     public function delete($id)
